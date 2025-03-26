@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import * as RippleHook from 'use-ripple-hook';
 
-import { flagsHooks } from '@/hooks/flags-hooks';
 import { colorsUtils } from '@/lib/color-util';
 
 type Theme = 'dark' | 'light' | 'system';
@@ -44,7 +43,22 @@ export function ThemeProvider({
   const [theme, setTheme] = useState<Theme>(
     () => (localStorage.getItem(storageKey) as Theme) || defaultTheme,
   );
-  const branding = flagsHooks.useWebsiteBranding();
+  const branding = {
+    colors: {
+      primary: {
+        default: '#000000',
+        dark: '#000000',
+        light: '#000000',
+      },
+    
+      websiteName: 'document title',
+    },
+    logos: {
+      favIconUrl: 'https://example.com/favicon.ico',
+      fullLogoUrl: 'https://example.com/logo.png',
+      logoIconUrl: 'https://example.com/logo-icon.png',
+    },
+  }
   useEffect(() => {
     if (!branding) {
       console.warn('Website brand is not defined');
@@ -54,7 +68,7 @@ export function ThemeProvider({
 
     const resolvedTheme = theme === 'system' ? 'light' : theme;
     root.classList.remove('light', 'dark');
-    document.title = branding.websiteName;
+    document.title = "document title"
     document.documentElement.style.setProperty(
       '--primary',
       colorsUtils.hexToHslString(branding.colors.primary.default),

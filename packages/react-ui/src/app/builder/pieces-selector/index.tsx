@@ -20,7 +20,7 @@ import {
   HandleSelectCallback,
   StepMetadataWithSuggestions,
 } from '@/features/pieces/lib/types';
-import { platformHooks } from '@/hooks/platform-hooks';
+
 import { useIsMobile } from '@/hooks/use-mobile';
 import {
   Action,
@@ -87,7 +87,6 @@ const PieceSelector = ({
       type: isTrigger ? 'trigger' : 'action',
     });
 
-  const { platform } = platformHooks.useCurrentPlatform();
 
   const pieceGroups = useMemo(() => {
     if (!metadata) return [];
@@ -127,11 +126,11 @@ const PieceSelector = ({
       (p) => pieceSelectorUtils.isUniversalAiPiece(p) && !isTrigger,
     );
     const utilityCorePieces = piecesMetadata.filter(
-      (p) => pieceSelectorUtils.isUtilityCorePiece(p, platform) && !isTrigger,
+      (p) => pieceSelectorUtils.isUtilityCorePiece(p) && !isTrigger,
     );
     const popularPieces = piecesMetadata.filter(
       (p) =>
-        pieceSelectorUtils.isPopularPieces(p, platform) &&
+        pieceSelectorUtils.isPopularPieces(p) &&
         selectedTag !== PieceTagEnum.AI,
     );
     const other = piecesMetadata.filter(
@@ -155,7 +154,6 @@ const PieceSelector = ({
     metadata,
     selectedTag,
     debouncedQuery,
-    platform,
     isTrigger,
     initialSelectedPiece,
   ]);

@@ -9,7 +9,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { platformHooks } from '@/hooks/platform-hooks';
+
 import {
   CodeAction,
   FlowOperationType,
@@ -41,7 +41,6 @@ const CodeSettings = React.memo(({ readonly }: CodeSettingsProps) => {
   const [selectedStep, refreshStepFormSettingsToggle] = useBuilderStateContext(
     (state) => [state.selectedStep || '', state.refreshStepFormSettingsToggle],
   );
-  const isCopilotEnabled = platformHooks.isCopilotEnabled();
   return (
     <div className="flex flex-col gap-4">
       <FormField
@@ -54,16 +53,7 @@ const CodeSettings = React.memo(({ readonly }: CodeSettingsProps) => {
             </div>
             <div className="flex items-center justify-between">
               <FormLabel>{t('Inputs')}</FormLabel>
-              {isCopilotEnabled && !readonly && (
-                <AskAiButton
-                  onClick={() => {}}
-                  varitant={'ghost'}
-                  operation={{
-                    type: FlowOperationType.UPDATE_ACTION,
-                    stepName: selectedStep,
-                  }}
-                ></AskAiButton>
-              )}
+         
             </div>
 
             <DictionaryProperty

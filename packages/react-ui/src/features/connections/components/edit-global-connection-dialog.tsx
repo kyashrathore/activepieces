@@ -20,7 +20,7 @@ import { Label } from '@/components/ui/label';
 import { INTERNAL_ERROR_TOAST, toast } from '@/components/ui/use-toast';
 import { AppConnectionWithoutSensitiveData } from '@activepieces/shared';
 
-import { AssignConnectionToProjectsControl } from '../../../components/ui/assign-global-connection-to-projects';
+
 import { globalConnectionsApi } from '../lib/global-connections-api';
 import {
   ConnectionNameAlreadyExists,
@@ -142,10 +142,7 @@ const EditGlobalConnectionDialog: React.FC<EditGlobalConnectionDialogProps> = ({
                   </FormItem>
                 )}
               />
-              <AssignConnectionToProjectsControl
-                control={editConnectionForm.control}
-                name="projectIds"
-              />
+         
               {editConnectionForm?.formState?.errors?.root?.serverError && (
                 <FormMessage>
                   {editConnectionForm.formState.errors.root.serverError.message}

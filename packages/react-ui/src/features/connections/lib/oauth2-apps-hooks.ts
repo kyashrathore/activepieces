@@ -31,7 +31,7 @@ export const oauth2AppsHooks = {
       oauth2App: query.data,
     };
   },
-  usePieceToClientIdMap(cloudAuthEnabled: boolean, edition: ApEdition) {
+  usePieceToClientIdMap(cloudAuthEnabled: boolean, edition: ApEdition = ApEdition.COMMUNITY) {
     return useQuery<PieceToClientIdMap, Error>({
       queryKey: ['oauth-apps'],
       queryFn: async () => {

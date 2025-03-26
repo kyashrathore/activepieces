@@ -7,7 +7,7 @@ import {
     SuggestionType,
 } from '@activepieces/shared'
 import Fuse from 'fuse.js'
-import { platformService } from '../../../platform/platform.service'
+
 import { PieceMetadataSchema } from '../../piece-metadata-entity'
 
 const pieceFilterKeys = [
@@ -50,16 +50,6 @@ export const filterPiecesBasedOnEmbedding = async ({
     platformId?: string
     pieces: PieceMetadataSchema[]
 }): Promise<PieceMetadataSchema[]> => {
-    if (isNil(platformId)) {
-        return pieces
-    }
-    const platform = await platformService.getOne(platformId)
-    if (isNil(platform)) {
-        return pieces
-    }
-    if (!platform.embeddingEnabled) {
-        return pieces
-    }
 
     return pieces
 }

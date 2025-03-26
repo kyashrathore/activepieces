@@ -35,9 +35,7 @@ import { appConnectionsHooks } from '@/features/connections/lib/app-connections-
 import { appConnectionUtils } from '@/features/connections/lib/app-connections-utils';
 import PieceIconWithPieceName from '@/features/pieces/components/piece-icon-from-name';
 import { piecesHooks } from '@/features/pieces/lib/pieces-hook';
-import { useAuthorization } from '@/hooks/authorization-hooks';
 import { userHooks } from '@/hooks/user-hooks';
-import { authenticationSession } from '@/lib/authentication-session';
 import { formatUtils } from '@/lib/utils';
 import {
   AppConnectionScope,
@@ -46,6 +44,7 @@ import {
   Permission,
   PlatformRole,
 } from '@activepieces/shared';
+
 function AppConnectionsPage() {
   const [refresh, setRefresh] = useState(0);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -53,7 +52,6 @@ function AppConnectionsPage() {
     Array<AppConnectionWithoutSensitiveData>
   >([]);
   const { toast } = useToast();
-  const { checkAccess } = useAuthorization();
   const userPlatformRole = userHooks.getCurrentUserPlatformRole();
   const location = useLocation();
   const { pieces } = piecesHooks.usePieces({});
@@ -61,9 +59,9 @@ function AppConnectionsPage() {
     label: piece.displayName,
     value: piece.name,
   }));
-  const projectId = authenticationSession.getProjectId()!;
+
   const { data, isLoading, refetch } = useQuery({
-    queryKey: ['appConnections', location.search, projectId],
+    queryKey: ['appConnections', location.search,],
     queryFn: () => {
       const searchParams = new URLSearchParams(location.search);
       const cursor = searchParams.get(CURSOR_QUERY_PARAM);
@@ -75,7 +73,7 @@ function AppConnectionsPage() {
       const pieceName = searchParams.get('pieceName') ?? undefined;
       const displayName = searchParams.get('displayName') ?? undefined;
       return appConnectionsApi.list({
-        projectId,
+        projectId:"",
         cursor: cursor ?? undefined,
         limit,
         status,
@@ -101,9 +99,7 @@ function AppConnectionsPage() {
     };
   }, [data, location.search]);
 
-  const userHasPermissionToWriteAppConnection = checkAccess(
-    Permission.WRITE_APP_CONNECTION,
-  );
+  const userHasPermissionToWriteAppConnection = true
 
   const bulkDeleteMutation = useMutation({
     mutationFn: async (ids: string[]) => {

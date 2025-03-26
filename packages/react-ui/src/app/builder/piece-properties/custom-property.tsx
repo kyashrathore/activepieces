@@ -1,7 +1,6 @@
 import { useEffect, useId, useRef } from 'react';
 
 import { useEmbedding } from '@/components/embed-provider';
-import { projectHooks } from '@/hooks/project-hooks';
 
 const CUSTOM_PROPERTY_CONTAINER_ID = 'custom-property-container';
 
@@ -16,7 +15,7 @@ const CustomProperty = ({
   code: string;
   disabled: boolean;
 }) => {
-  const { project } = projectHooks.useCurrentProject();
+
   const { embedState } = useEmbedding();
   const alreadyRendered = useRef(false);
   const id = useId();
@@ -38,7 +37,7 @@ const CustomProperty = ({
         value,
         onChange,
         isEmbedded: embedState.isEmbedded,
-        projectId: project.id,
+        projectId: '',
         disabled,
       });
 

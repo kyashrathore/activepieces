@@ -1,7 +1,6 @@
 import { t } from 'i18next';
 import { Sparkle } from 'lucide-react';
 
-import { platformHooks } from '@/hooks/platform-hooks';
 
 import { Button, ButtonProps } from '../../../components/ui/button';
 import { AskAiButtonOperations } from '../../../features/pieces/lib/types';
@@ -16,14 +15,11 @@ const AskAiButton = ({
   operation: AskAiButtonOperations;
   varitant: ButtonProps['variant'];
 }) => {
-  const isCopilotEnabled = platformHooks.isCopilotEnabled();
 
   const setAskiAiButtonProps = useBuilderStateContext(
     (state) => state.setAskAiButtonProps,
   );
-  if (!isCopilotEnabled) {
-    return <></>;
-  }
+ 
   return (
     <Button
       variant={varitant}

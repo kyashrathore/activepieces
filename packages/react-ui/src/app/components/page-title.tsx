@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { flagsHooks } from '@/hooks/flags-hooks';
+
 
 type PageTitleProps = {
   title: string;
@@ -8,11 +8,10 @@ type PageTitleProps = {
 };
 
 const PageTitle = ({ title, children }: PageTitleProps) => {
-  const websiteBranding = flagsHooks.useWebsiteBranding();
 
   useEffect(() => {
-    document.title = `${title} | ${websiteBranding.websiteName}`;
-  }, [title, websiteBranding.websiteName]);
+    document.title = `${title}`;
+  }, [title]);
 
   return children;
 };

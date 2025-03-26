@@ -12,8 +12,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { flagsHooks } from '@/hooks/flags-hooks';
-import { platformHooks } from '@/hooks/platform-hooks';
+
 import { oauth2Utils } from '@/lib/oauth2-utils';
 import {
   OAuth2Property,
@@ -45,7 +44,7 @@ type OAuth2ConnectionSettingsProps = {
 function replaceVariables(
   authUrl: string,
   scope: string,
-  props: Record<string, unknown>,
+  props: Record<string, unknown>
 ) {
   let newAuthUrl = authUrl;
   Object.entries(props).forEach(([key, value]) => {
@@ -67,7 +66,6 @@ const OAuth2ConnectionSettings = ({
   piece,
   reconnectConnection,
 }: OAuth2ConnectionSettingsProps) => {
-  const { platform } = platformHooks.useCurrentPlatform();
   const [readyToConnect, setReadyToConnect] = useState(false);
   const [refresh, setRefresh] = useState(0);
   const [currentOAuth2Type, setOAuth2Type] = useState<
@@ -80,21 +78,14 @@ const OAuth2ConnectionSettings = ({
       reconnectConnection?.type === AppConnectionType.OAUTH2 ||
       reconnectConnection?.type === AppConnectionType.PLATFORM_OAUTH2
       ? reconnectConnection?.type
-      : undefined,
-  );
-  const { data: thirdPartyUrl } = flagsHooks.useFlag<string>(
-    ApFlagId.THIRD_PARTY_AUTH_PROVIDER_REDIRECT_URL,
-  );
-  const { data: edition } = flagsHooks.useFlag<ApEdition>(ApFlagId.EDITION);
-  const { data: pieceToClientIdMap } = oauth2AppsHooks.usePieceToClientIdMap(
-    platform.cloudAuthEnabled,
-    edition!,
+      : undefined
   );
 
-  const redirectUrl =
-    currentOAuth2Type === AppConnectionType.CLOUD_OAUTH2
-      ? 'https://secrets.activepieces.com/redirect'
-      : thirdPartyUrl;
+  const { data: pieceToClientIdMap } = oauth2AppsHooks.usePieceToClientIdMap(
+    false,
+  );
+
+  const redirectUrl = ''
 
   const form = useFormContext<{
     request:
@@ -108,7 +99,7 @@ const OAuth2ConnectionSettings = ({
   useEffect(() => {
     if (isNil(currentOAuth2Type) && !isNil(pieceToClientIdMap)) {
       setOAuth2Type(
-        pieceToClientIdMap?.[piece.name]?.type ?? AppConnectionType.OAUTH2,
+        pieceToClientIdMap?.[piece.name]?.type ?? AppConnectionType.OAUTH2
       );
       return;
     }
@@ -120,12 +111,12 @@ const OAuth2ConnectionSettings = ({
     form.setValue(
       'request.value.props',
       formUtils.getDefaultValueForStep(authProperty.props ?? {}, {}),
-      { shouldValidate: true },
+      { shouldValidate: true }
     );
     form.setValue(
       'request.value.client_secret',
       currentOAuth2Type === AppConnectionType.OAUTH2 ? '' : 'FAKE_SECRET',
-      { shouldValidate: true },
+      { shouldValidate: true }
     );
 
     form.setValue(
@@ -133,7 +124,7 @@ const OAuth2ConnectionSettings = ({
       currentOAuth2Type === AppConnectionType.OAUTH2
         ? ''
         : predefinedClientId ?? '',
-      { shouldValidate: true },
+      { shouldValidate: true }
     );
     form.setValue('request.value.grant_type', authProperty.grantType, {
       shouldValidate: true,
@@ -145,7 +136,7 @@ const OAuth2ConnectionSettings = ({
           ? 'FAKE_CODE'
           : ''
       }`,
-      { shouldValidate: true },
+      { shouldValidate: true }
     );
     form.setValue('request.value.code_challenge', '', { shouldValidate: true });
     form.setValue('request.value.type', currentOAuth2Type!, {
@@ -176,19 +167,19 @@ const OAuth2ConnectionSettings = ({
     setReadyToConnect(
       baseCriteria &&
         (currentOAuth2Type !== AppConnectionType.OAUTH2 || hasClientSecret) &&
-        arePropsValid,
+        arePropsValid
     );
   }, [watchedForm]);
 
   async function openPopup(
     redirectUrl: string,
     clientId: string,
-    props: Record<string, unknown> | undefined,
+    props: Record<string, unknown> | undefined
   ) {
     const { authUrl, scope } = replaceVariables(
       authProperty.authUrl,
       authProperty.scope.join(' '),
-      props ?? {},
+      props ?? {}
     );
     const { code, codeChallenge } = await oauth2Utils.openOAuth2Popup({
       authUrl,
@@ -286,7 +277,7 @@ const OAuth2ConnectionSettings = ({
                   openPopup(
                     redirectUrl!,
                     form.getValues().request.value.client_id,
-                    form.getValues().request.value.props,
+                    form.getValues().request.value.props
                   )
                 }
               >

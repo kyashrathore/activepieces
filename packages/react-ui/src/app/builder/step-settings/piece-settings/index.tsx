@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Skeleton } from '@/components/ui/skeleton';
-import { flagsHooks } from '@/hooks/flags-hooks';
+
 import {
   ApFlagId,
   isNil,
@@ -48,25 +48,17 @@ const PieceSettings = React.memo((props: PieceSettingsProps) => {
     selectedTrigger?.props ?? {},
   );
 
-  const { data: webhookPrefixUrl } = flagsHooks.useFlag<string>(
-    ApFlagId.WEBHOOK_URL_PREFIX,
-  );
+  const webhookPrefixUrl =  ''
 
-  const { data: pausedFlowTimeoutDays } = flagsHooks.useFlag<number>(
-    ApFlagId.PAUSED_FLOW_TIMEOUT_DAYS,
-  );
 
-  const { data: webhookTimeoutSeconds } = flagsHooks.useFlag<number>(
-    ApFlagId.WEBHOOK_TIMEOUT_SECONDS,
-  );
 
-  const { data: frontendUrl } = flagsHooks.useFlag<string>(ApFlagId.PUBLIC_URL);
+  const frontendUrl=  ''// flagsHooks.useFlag<string>(ApFlagId.PUBLIC_URL);
   const markdownVariables = {
     webhookUrl: `${webhookPrefixUrl}/${props.flowId}`,
     formUrl: `${frontendUrl}forms/${props.flowId}`,
     chatUrl: `${frontendUrl}chats/${props.flowId}`,
-    pausedFlowTimeoutDays: pausedFlowTimeoutDays?.toString() ?? '',
-    webhookTimeoutSeconds: webhookTimeoutSeconds?.toString() ?? '',
+    pausedFlowTimeoutDays:  '',
+    webhookTimeoutSeconds: '',
   };
 
   const showAuthForAction =

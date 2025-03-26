@@ -6,7 +6,7 @@ import axios, {
 } from 'axios';
 import qs from 'qs';
 
-import { authenticationSession } from '@/lib/authentication-session';
+
 import { ErrorCode } from '@activepieces/shared';
 
 export const API_BASE_URL =
@@ -43,7 +43,7 @@ function globalErrorHandler(error: AxiosError) {
       errorCode === ErrorCode.SESSION_EXPIRED ||
       errorCode === ErrorCode.INVALID_BEARER_TOKEN
     ) {
-      authenticationSession.logOut();
+      // authenticationSession.logOut();
       console.log(errorCode);
       window.location.href = '/sign-in';
     }
@@ -67,7 +67,7 @@ function request<TResponse>(
       Authorization:
         unAuthenticated || !isApWebsite
           ? undefined
-          : `Bearer ${authenticationSession.getToken()}`,
+          : `Bearer {authenticationSession.getToken()}`,
     },
   })
     .then((response) =>

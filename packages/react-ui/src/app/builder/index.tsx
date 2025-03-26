@@ -6,22 +6,16 @@ import {
   LeftSideBarType,
   RightSideBarType,
   useBuilderStateContext,
-  useSwitchToDraft,
 } from '@/app/builder/builder-hooks';
 import { DataSelector } from '@/app/builder/data-selector';
 import { CanvasControls } from '@/app/builder/flow-canvas/canvas-controls';
 import { StepSettingsProvider } from '@/app/builder/step-settings/step-settings-context';
-import { ShowPoweredBy } from '@/components/show-powered-by';
-import { useSocket } from '@/components/socket-provider';
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable-panel';
-import { RunDetailsBar } from '@/features/flow-runs/components/run-details-bar';
-import { flowRunsApi } from '@/features/flow-runs/lib/flow-runs-api';
 import { piecesHooks } from '@/features/pieces/lib/pieces-hook';
-import { platformHooks } from '@/hooks/platform-hooks';
 import {
   ActionType,
   PieceTrigger,
@@ -34,22 +28,19 @@ import {
 import { cn, useElementSize } from '../../lib/utils';
 
 import { BuilderHeader } from './builder-header';
-import { CopilotSidebar } from './copilot';
 import { FlowCanvas } from './flow-canvas';
-import { FlowVersionsList } from './flow-versions';
-import { FlowRunDetails } from './run-details';
-import { RunsList } from './run-list';
+
 import { StepSettingsContainer } from './step-settings';
 
 const minWidthOfSidebar = 'min-w-[max(20vw,400px)]';
 const animateResizeClassName = `transition-all duration-200`;
 
 const useAnimateSidebar = (
-  sidebarValue: LeftSideBarType | RightSideBarType,
+  sidebarValue: LeftSideBarType | RightSideBarType
 ) => {
   const handleRef = useRef<ImperativePanelHandle>(null);
   const sidebarClosed = [LeftSideBarType.NONE, RightSideBarType.NONE].includes(
-    sidebarValue,
+    sidebarValue
   );
   useEffect(() => {
     const sidebarSize = handleRef.current?.getSize() ?? 0;
@@ -65,12 +56,12 @@ const useAnimateSidebar = (
 const constructContainerKey = (
   flowId: string,
   stepName: string,
-  triggerOrActionName?: string,
+  triggerOrActionName?: string
 ) => {
   return flowId + stepName + (triggerOrActionName ?? '');
 };
 const BuilderPage = () => {
-  const { platform } = platformHooks.useCurrentPlatform();
+
   const [
     setRun,
     flowVersion,
@@ -100,7 +91,7 @@ const BuilderPage = () => {
       }
       const step = flowStructureUtil.getStep(
         state.selectedStep,
-        flowVersion.trigger,
+        flowVersion.trigger
       );
       const triggerOrActionName =
         step?.type === TriggerType.PIECE
@@ -111,10 +102,10 @@ const BuilderPage = () => {
         containerKey: constructContainerKey(
           state.flow.id,
           state.selectedStep,
-          triggerOrActionName,
+          triggerOrActionName
         ),
       };
-    },
+    }
   );
   const middlePanelRef = useRef<HTMLDivElement>(null);
   const middlePanelSize = useElementSize(middlePanelRef);
@@ -136,47 +127,12 @@ const BuilderPage = () => {
   const pieceModel = versions
     ? versions[memorizedSelectedStep?.settings.pieceVersion || '']
     : undefined;
-  const socket = useSocket();
 
-  const { mutate: fetchAndUpdateRun } = useMutation({
-    mutationFn: flowRunsApi.getPopulated,
-  });
-  useEffect(() => {
-    socket.on(WebsocketClientEvent.REFRESH_PIECE, () => {
-      refetchPiece();
-    });
-    socket.on(WebsocketClientEvent.FLOW_RUN_PROGRESS, (runId) => {
-      if (run && run?.id === runId) {
-        fetchAndUpdateRun(runId, {
-          onSuccess: (run) => {
-            setRun(run, flowVersion);
-          },
-        });
-      }
-    });
-    return () => {
-      socket.removeAllListeners(WebsocketClientEvent.REFRESH_PIECE);
-      socket.removeAllListeners(WebsocketClientEvent.FLOW_RUN_PROGRESS);
-    };
-  }, [socket.id, run?.id]);
-
-  const { switchToDraft, isSwitchingToDraftPending } = useSwitchToDraft();
   const [hasCanvasBeenInitialised, setHasCanvasBeenInitialised] =
     useState(false);
 
   return (
     <div className="flex h-screen w-screen flex-col relative">
-      {run && (
-        <RunDetailsBar
-          canExitRun={canExitRun}
-          run={run}
-          isLoading={isSwitchingToDraftPending}
-          exitRun={() => {
-            socket.removeAllListeners(WebsocketClientEvent.FLOW_RUN_PROGRESS);
-            switchToDraft();
-          }}
-        />
-      )}
       <div className="z-50">
         <BuilderHeader />
       </div>
@@ -194,10 +150,6 @@ const BuilderPage = () => {
           })}
         >
           <div ref={leftSidePanelRef} className="w-full h-full">
-            {leftSidebar === LeftSideBarType.RUNS && <RunsList />}
-            {leftSidebar === LeftSideBarType.RUN_DETAILS && <FlowRunDetails />}
-            {leftSidebar === LeftSideBarType.VERSIONS && <FlowVersionsList />}
-            {leftSidebar === LeftSideBarType.AI_COPILOT && <CopilotSidebar />}
           </div>
         </ResizablePanel>
         <ResizableHandle
@@ -226,7 +178,6 @@ const BuilderPage = () => {
                 ></CanvasControls>
               )}
 
-            <ShowPoweredBy position="absolute" show={platform?.showPoweredBy} />
             <DataSelector
               parentHeight={middlePanelSize.height}
               parentWidth={middlePanelSize.width}

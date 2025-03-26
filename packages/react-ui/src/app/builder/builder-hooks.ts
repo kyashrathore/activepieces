@@ -12,7 +12,6 @@ import { usePrevious } from 'react-use';
 import { create, useStore } from 'zustand';
 
 import { INTERNAL_ERROR_TOAST, toast } from '@/components/ui/use-toast';
-import { flowsApi } from '@/features/flows/lib/flows-api';
 import { PromiseQueue } from '@/lib/promise-queue';
 import {
   FlowOperationRequest,
@@ -31,9 +30,7 @@ import {
   isFlowStateTerminal,
 } from '@activepieces/shared';
 
-import { flowRunUtils } from '../../features/flow-runs/lib/flow-run-utils';
 import { AskAiButtonOperations } from '../../features/pieces/lib/types';
-import { useAuthorization } from '../../hooks/authorization-hooks';
 
 import {
   copySelectedNodes,
@@ -55,7 +52,7 @@ const flowUpdatesQueue = new PromiseQueue();
 export const BuilderStateContext = createContext<BuilderStore | null>(null);
 
 export function useBuilderStateContext<T>(
-  selector: (state: BuilderState) => T,
+  selector: (state: BuilderState) => T
 ): T {
   const store = useContext(BuilderStateContext);
   if (!store)
@@ -123,14 +120,14 @@ export type BuilderState = {
   addOperationListener: (
     listener: (
       flowVersion: FlowVersion,
-      operation: FlowOperationRequest,
-    ) => void,
+      operation: FlowOperationRequest
+    ) => void
   ) => void;
   removeOperationListener: (
     listener: (
       flowVersion: FlowVersion,
-      operation: FlowOperationRequest,
-    ) => void,
+      operation: FlowOperationRequest
+    ) => void
   ) => void;
   askAiButtonProps: AskAiButtonOperations | null;
   setAskAiButtonProps: (props: AskAiButtonOperations | null) => void;
@@ -142,7 +139,7 @@ export type BuilderState = {
   setPieceSelectorStep: (step: string | null) => void;
   isFocusInsideListMapperModeInput: boolean;
   setIsFocusInsideListMapperModeInput: (
-    isFocusInsideListMapperModeInput: boolean,
+    isFocusInsideListMapperModeInput: boolean
   ) => void;
 };
 const DEFAULT_PANNING_MODE_KEY_IN_LOCAL_STORAGE = 'defaultPanningMode';
@@ -161,7 +158,7 @@ export type BuilderStore = ReturnType<typeof createBuilderStore>;
 
 function determineInitiallySelectedStep(
   failedStepInRun: string | null,
-  flowVersion: FlowVersion,
+  flowVersion: FlowVersion
 ): string | null {
   if (failedStepInRun) {
     return failedStepInRun;
@@ -177,28 +174,19 @@ function determineInitiallySelectedStep(
 
 export const createBuilderStore = (
   initialState: BuilderInitialState,
-  newFlow: boolean,
+  newFlow: boolean
 ) =>
   create<BuilderState>((set) => {
-    const failedStepInRun = initialState.run?.steps
-      ? flowRunUtils.findFailedStepInOutput(initialState.run.steps)
-      : null;
+    const failedStepInRun = null;
     const initiallySelectedStep = newFlow
       ? null
       : determineInitiallySelectedStep(
           failedStepInRun,
-          initialState.flowVersion,
+          initialState.flowVersion
         );
 
     return {
-      loopsIndexes:
-        initialState.run && initialState.run.steps
-          ? flowRunUtils.findLoopsState(
-              initialState.flowVersion,
-              initialState.run,
-              {},
-            )
-          : {},
+      loopsIndexes: {},
       sampleData: initialState.sampleData,
       sampleDataInput: initialState.sampleDataInput,
       flow: initialState.flow,
@@ -337,20 +325,12 @@ export const createBuilderStore = (
       setRun: async (run: FlowRun, flowVersion: FlowVersion) =>
         set((state) => {
           return {
-            loopsIndexes: flowRunUtils.findLoopsState(
-              flowVersion,
-              run,
-              state.loopsIndexes,
-            ),
+            loopsIndexes: {},
             run,
             flowVersion,
             leftSidebar: LeftSideBarType.RUN_DETAILS,
             rightSidebar: RightSideBarType.PIECE_SETTINGS,
-            selectedStep: run.steps
-              ? flowRunUtils.findFailedStepInOutput(run.steps) ??
-                state.selectedStep ??
-                'trigger'
-              : 'trigger',
+            selectedStep: 'trigger',
             readonly: true,
           };
         }),
@@ -373,7 +353,7 @@ export const createBuilderStore = (
           }
           const newFlowVersion = flowOperations.apply(
             state.flowVersion,
-            operation,
+            operation
           );
 
           state.operationListeners.forEach((listener) => {
@@ -383,17 +363,10 @@ export const createBuilderStore = (
           const updateRequest = async () => {
             set({ saving: true });
             try {
-              const updatedFlowVersion = await flowsApi.update(
-                state.flow.id,
-                operation,
-                true,
-              );
               set((state) => {
                 return {
                   flowVersion: {
                     ...state.flowVersion,
-                    id: updatedFlowVersion.version.id,
-                    state: updatedFlowVersion.version.state,
                   },
                   saving: flowUpdatesQueue.size() !== 0,
                 };
@@ -433,8 +406,8 @@ export const createBuilderStore = (
       addOperationListener: (
         listener: (
           flowVersion: FlowVersion,
-          operation: FlowOperationRequest,
-        ) => void,
+          operation: FlowOperationRequest
+        ) => void
       ) =>
         set((state) => ({
           operationListeners: [...state.operationListeners, listener],
@@ -442,12 +415,12 @@ export const createBuilderStore = (
       removeOperationListener: (
         listener: (
           flowVersion: FlowVersion,
-          operation: FlowOperationRequest,
-        ) => void,
+          operation: FlowOperationRequest
+        ) => void
       ) =>
         set((state) => ({
           operationListeners: state.operationListeners.filter(
-            (l) => l !== listener,
+            (l) => l !== listener
           ),
         })),
       askAiButtonProps: null,
@@ -511,7 +484,7 @@ export const createBuilderStore = (
       },
       isFocusInsideListMapperModeInput: false,
       setIsFocusInsideListMapperModeInput: (
-        isFocusInsideListMapperModeInput: boolean,
+        isFocusInsideListMapperModeInput: boolean
       ) => {
         return set(() => ({
           isFocusInsideListMapperModeInput,
@@ -529,7 +502,7 @@ export function getPanningModeFromLocalStorage(): 'grab' | 'pan' {
 
 const shortcutHandler = (
   event: KeyboardEvent,
-  handlers: Record<keyof CanvasShortcutsProps, () => void>,
+  handlers: Record<keyof CanvasShortcutsProps, () => void>
 ) => {
   const shortcutActivated = Object.entries(CanvasShortcuts).find(
     ([_, shortcut]) =>
@@ -538,7 +511,7 @@ const shortcutHandler = (
         shortcut.withCtrl === event.ctrlKey ||
         shortcut.withCtrl === event.metaKey
       ) &&
-      !!shortcut.withShift === event.shiftKey,
+      !!shortcut.withShift === event.shiftKey
   );
   if (shortcutActivated) {
     if (
@@ -583,7 +556,7 @@ export const useHandleKeyPressOnCanvas = () => {
         !readonly
       ) {
         const selectedNodesWithoutTrigger = selectedNodes.filter(
-          (node) => node !== flowVersion.trigger.name,
+          (node) => node !== flowVersion.trigger.name
         );
         shortcutHandler(e, {
           Copy: () => {
@@ -622,7 +595,7 @@ export const useHandleKeyPressOnCanvas = () => {
                 const lastStep = [
                   flowVersion.trigger,
                   ...flowStructureUtil.getAllNextActionsWithoutChildren(
-                    flowVersion.trigger,
+                    flowVersion.trigger
                   ),
                 ].at(-1)!.name;
                 const lastSelectedNode =
@@ -635,7 +608,7 @@ export const useHandleKeyPressOnCanvas = () => {
                     stepLocationRelativeToParent:
                       StepLocationRelativeToParent.AFTER,
                   },
-                  applyOperation,
+                  applyOperation
                 );
               }
             });
@@ -650,45 +623,13 @@ export const useHandleKeyPressOnCanvas = () => {
       selectedStep,
       exitStepSettings,
       readonly,
-    ],
+    ]
   );
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
-};
-
-export const useSwitchToDraft = () => {
-  const [flowVersion, setVersion, exitRun, setFlow] = useBuilderStateContext(
-    (state) => [
-      state.flowVersion,
-      state.setVersion,
-      state.exitRun,
-      state.setFlow,
-    ],
-  );
-  const { checkAccess } = useAuthorization();
-  const userHasPermissionToEditFlow = checkAccess(Permission.WRITE_FLOW);
-  const { mutate: switchToDraft, isPending: isSwitchingToDraftPending } =
-    useMutation({
-      mutationFn: async () => {
-        const flow = await flowsApi.get(flowVersion.flowId);
-        return flow;
-      },
-      onSuccess: (flow) => {
-        setFlow(flow);
-        setVersion(flow.version);
-        exitRun(userHasPermissionToEditFlow);
-      },
-      onError: () => {
-        toast(INTERNAL_ERROR_TOAST);
-      },
-    });
-  return {
-    switchToDraft,
-    isSwitchingToDraftPending,
-  };
 };
 
 export const usePasteActionsInClipboard = () => {
@@ -713,7 +654,7 @@ export const useIsFocusInsideListMapperModeInput = ({
 }: {
   containerRef: React.RefObject<HTMLDivElement>;
   setIsFocusInsideListMapperModeInput: (
-    isFocusInsideListMapperModeInput: boolean,
+    isFocusInsideListMapperModeInput: boolean
   ) => void;
   isFocusInsideListMapperModeInput: boolean;
 }) => {
@@ -725,11 +666,11 @@ export const useIsFocusInsideListMapperModeInput = ({
         !isNil(document.activeElement) &&
         document.activeElement instanceof HTMLElement &&
         textMentionUtils.isDataSelectorOrChildOfDataSelector(
-          document.activeElement,
+          document.activeElement
         );
       setIsFocusInsideListMapperModeInput(
         isFocusedInside ||
-          (isFocusedInsideDataSelector && isFocusInsideListMapperModeInput),
+          (isFocusedInsideDataSelector && isFocusInsideListMapperModeInput)
       );
     };
     document.addEventListener('focusin', focusInListener);
@@ -751,9 +692,7 @@ export const useFocusedFailedStep = () => {
       !isFlowStateTerminal(previousRun.status) &&
       isFlowStateTerminal(currentRun.status))
   ) {
-    const failedStep = currentRun.steps
-      ? flowRunUtils.findFailedStepInOutput(currentRun.steps)
-      : null;
+    const failedStep = null;
     if (failedStep) {
       setTimeout(() => {
         fitView(flowCanvasUtils.createFocusStepInGraphParams(failedStep));
@@ -764,7 +703,7 @@ export const useFocusedFailedStep = () => {
 
 export const useResizeCanvas = (
   containerRef: React.RefObject<HTMLDivElement>,
-  setHasCanvasBeenInitialised: (hasCanvasBeenInitialised: boolean) => void,
+  setHasCanvasBeenInitialised: (hasCanvasBeenInitialised: boolean) => void
 ) => {
   const containerSizeRef = useRef({
     width: 0,

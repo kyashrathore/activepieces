@@ -7,7 +7,6 @@ import { twMerge } from 'tailwind-merge';
 
 import { LocalesEnum, Permission } from '@activepieces/shared';
 
-import { authenticationSession } from './authentication-session';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -231,20 +230,7 @@ export const useTimeAgo = (date: Date) => {
   return timeAgo;
 };
 
-export const determineDefaultRoute = (
-  checkAccess: (permission: Permission) => boolean,
-) => {
-  if (checkAccess(Permission.READ_FLOW)) {
-    return authenticationSession.appendProjectRoutePrefix('/flows');
-  }
-  if (checkAccess(Permission.READ_RUN)) {
-    return authenticationSession.appendProjectRoutePrefix('/runs');
-  }
-  if (checkAccess(Permission.READ_ISSUES)) {
-    return authenticationSession.appendProjectRoutePrefix('/issues');
-  }
-  return authenticationSession.appendProjectRoutePrefix('/settings');
-};
+
 
 export const NEW_FLOW_QUERY_PARAM = 'newFlow';
 export const NEW_TABLE_QUERY_PARAM = 'newTable';

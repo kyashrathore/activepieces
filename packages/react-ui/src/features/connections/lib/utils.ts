@@ -1,6 +1,5 @@
 import { t } from 'i18next';
 
-import { authenticationSession } from '@/lib/authentication-session';
 import {
   CustomAuthProps,
   OAuth2Props,
@@ -38,7 +37,7 @@ export const newConnectionUtils = {
   getConnectionName(
     piece: PieceMetadataModelSummary | PieceMetadataModel,
     reconnectConnection: AppConnectionWithoutSensitiveData | null,
-    externalIdComingFromSdk?: string | null,
+    externalIdComingFromSdk?: string | null
   ): {
     externalId: string;
     displayName: string;
@@ -65,9 +64,9 @@ export const newConnectionUtils = {
   createDefaultValues(
     piece: PieceMetadataModelSummary | PieceMetadataModel,
     suggestedExternalId: string,
-    suggestedDisplayName: string,
+    suggestedDisplayName: string
   ): Partial<UpsertAppConnectionRequestBody> {
-    const projectId = authenticationSession.getProjectId();
+    const projectId = '';
     assertNotNullOrUndefined(projectId, 'projectId');
     if (!piece.auth) {
       throw new Error(`Unsupported property type: ${piece.auth}`);
@@ -109,7 +108,7 @@ export const newConnectionUtils = {
           value: {
             type: AppConnectionType.CUSTOM_AUTH,
             props: newConnectionUtils.extractDefaultPropsValues(
-              piece.auth.props,
+              piece.auth.props
             ),
           },
         };
@@ -127,7 +126,7 @@ export const newConnectionUtils = {
             authorization_method: piece.auth?.authorizationMethod,
             client_id: '',
             props: newConnectionUtils.extractDefaultPropsValues(
-              piece.auth.props,
+              piece.auth.props
             ),
             code: '',
           },
@@ -161,18 +160,18 @@ export const newConnectionUtils = {
 
 export const isConnectionNameUnique = async (
   isGlobalConnection: boolean,
-  displayName: string,
+  displayName: string
 ) => {
   const connections = isGlobalConnection
     ? await globalConnectionsApi.list({
         limit: 10000,
       })
     : await appConnectionsApi.list({
-        projectId: authenticationSession.getProjectId()!,
+        projectId: '',
         limit: 10000,
       });
   const existingConnection = connections.data.find(
-    (connection) => connection.displayName === displayName,
+    (connection) => connection.displayName === displayName
   );
   return isNil(existingConnection);
 };

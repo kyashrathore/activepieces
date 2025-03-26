@@ -85,7 +85,6 @@ const isPieceStepMetadata = (
 
 const isPopularPieces = (
   stepMetadata: StepMetadataWithSuggestions,
-  platform: PlatformWithoutSensitiveData,
 ) => {
   if (
     stepMetadata.type !== TriggerType.PIECE &&
@@ -103,8 +102,7 @@ const isPopularPieces = (
     '@activepieces/piece-forms',
     '@activepieces/piece-slack',
   ];
-  const pinnedPieces = platform.pinnedPieces ?? [];
-  return [...popularPieces, ...pinnedPieces].includes(
+  return [...popularPieces].includes(
     (stepMetadata as PieceStepMetadata).pieceName,
   );
 };
@@ -127,7 +125,6 @@ const isUniversalAiPiece = (stepMetadata: StepMetadata) => {
 
 const isUtilityCorePiece = (
   stepMetadata: StepMetadata,
-  platform: PlatformWithoutSensitiveData,
 ) => {
   if (stepMetadata.type === ActionType.CODE) {
     return true;
@@ -136,7 +133,7 @@ const isUtilityCorePiece = (
     return false;
   }
   return (
-    !isFlowController(stepMetadata) && !isPopularPieces(stepMetadata, platform)
+    !isFlowController(stepMetadata) && !isPopularPieces(stepMetadata)
   );
 };
 

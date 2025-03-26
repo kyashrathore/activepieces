@@ -2,8 +2,7 @@ import { t } from 'i18next';
 import { ChevronLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-import { flagsHooks } from '@/hooks/flags-hooks';
-import { authenticationSession } from '@/lib/authentication-session';
+
 
 import { useEmbedding } from '../embed-provider';
 
@@ -17,14 +16,14 @@ type HomeButtonProps = {
 
 const HomeButton = ({ route, showBackButton }: HomeButtonProps) => {
   const { embedState } = useEmbedding();
-  const branding = flagsHooks.useWebsiteBranding();
+  const branding = ''
   return (
     <>
       {!embedState.hideLogoInBuilder &&
         !embedState.disableNavigationInBuilder && (
           <Tooltip>
             <TooltipTrigger asChild>
-              <Link to={authenticationSession.appendProjectRoutePrefix(route)}>
+              <Link to={route}>
                 <Button
                   variant="ghost"
                   size={'icon'}
@@ -33,8 +32,8 @@ const HomeButton = ({ route, showBackButton }: HomeButtonProps) => {
                   {!showBackButton && (
                     <img
                       className="h-7 w-7 object-contain"
-                      src={branding.logos.logoIconUrl}
-                      alt={branding.websiteName}
+                      src={''}
+                      alt={''}
                     />
                   )}
                   {showBackButton && <ChevronLeft className="h-4 w-4" />}

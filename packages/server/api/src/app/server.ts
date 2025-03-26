@@ -8,21 +8,19 @@ import fastifyFavicon from 'fastify-favicon'
 import { fastifyRawBody } from 'fastify-raw-body'
 import qs from 'qs'
 import { setupApp } from './app'
-import { healthModule } from './health/health.module'
+
 import { errorHandler } from './helper/error-handler'
 import { system } from './helper/system/system'
-import { setupWorker } from './worker'
+
 
 
 export const setupServer = async (): Promise<FastifyInstance> => {
     const app = await setupBaseApp()
-
+    console.log(system.isApp(), 'dolat')
     if (system.isApp()) {
         await setupApp(app)
     }
-    if (system.isWorker()) {
-        await setupWorker(app)
-    }
+
     return app
 }
 
@@ -63,7 +61,6 @@ async function setupBaseApp(): Promise<FastifyInstance> {
             (part as any).value = apFile
         },
     })
-    exceptionHandler.initializeSentry(system.get(AppSystemProp.SENTRY_DSN))
 
 
     await app.register(fastifyRawBody, {
@@ -87,7 +84,6 @@ async function setupBaseApp(): Promise<FastifyInstance> {
         { parseAs: 'string' },
         app.getDefaultJsonParser('ignore', 'ignore'),
     )
-    await app.register(healthModule)
 
     return app
 }

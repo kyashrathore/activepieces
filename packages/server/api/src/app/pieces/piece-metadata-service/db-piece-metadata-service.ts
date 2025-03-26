@@ -6,7 +6,6 @@ import { FastifyBaseLogger } from 'fastify'
 import semVer from 'semver'
 import { IsNull } from 'typeorm'
 import { repoFactory } from '../../core/db/repo-factory'
-import { pieceTagService } from '../../tags/pieces/piece-tag.service'
 import {
     PieceMetadataEntity,
     PieceMetadataSchema,
@@ -37,13 +36,13 @@ export const FastDbPieceMetadataService = (log: FastifyBaseLogger): PieceMetadat
                     projectUsage: usageCount,
                 }
             })
-            const piecesWithTags = await enrichTags(params.platformId, latestVersionOfEachPiece, params.includeTags)
+
             const filteredPieces = await pieceMetadataServiceHooks.get().filterPieces({
                 ...params,
-                pieces: piecesWithTags,
+                pieces: latestVersionOfEachPiece,
                 suggestionType: params.suggestionType,
             })
-            return toPieceMetadataModelSummary(filteredPieces, piecesWithTags, params.suggestionType)
+            return toPieceMetadataModelSummary(filteredPieces, latestVersionOfEachPiece, params.suggestionType)
         },
         async get({ projectId, platformId, version, name }): Promise<PieceMetadataModel | undefined> {
             const versionToSearch = findNextExcludedVersion(version)
@@ -168,18 +167,7 @@ const findOldestCreataDate = async ({ name, projectId, platformId }: { name: str
     return piece?.created ?? dayjs().toISOString()
 }
 
-const enrichTags = async (platformId: string | undefined, pieces: PieceMetadataSchema[], includeTags: boolean | undefined): Promise<PieceMetadataSchema[]> => {
-    if (!includeTags || isNil(platformId)) {
-        return pieces
-    }
-    const tags = await pieceTagService.findByPlatform(platformId)
-    return pieces.map((piece) => {
-        return {
-            ...piece,
-            tags: tags[piece.name] ?? [],
-        }
-    })
-}
+
 
 const findNextExcludedVersion = (version: string | undefined): { baseVersion: string, nextExcludedVersion: string } | undefined => {
     if (version?.startsWith('^')) {

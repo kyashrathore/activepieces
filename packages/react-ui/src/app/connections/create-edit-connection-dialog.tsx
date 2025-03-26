@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { useEffectOnce } from 'react-use';
 
 import { ApMarkdown } from '@/components/custom/markdown';
-import { AssignConnectionToProjectsControl } from '@/components/ui/assign-global-connection-to-projects';
+
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -250,12 +250,7 @@ const CreateOrEditConnectionDialogContent = React.memo(
                 ></FormField>
               )}
 
-              {isGlobalConnection && (
-                <AssignConnectionToProjectsControl
-                  control={form.control}
-                  name="request.projectIds"
-                />
-              )}
+
               {auth?.type === PropertyType.SECRET_TEXT && (
                 <SecretTextConnectionSettings
                   authProperty={piece.auth as SecretTextProperty<boolean>}

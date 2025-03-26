@@ -1,7 +1,6 @@
 import {
     AppConnection,
     AppConnectionStatus,
-    User,
 } from '@activepieces/shared'
 import { EntitySchema } from 'typeorm'
 import {
@@ -14,7 +13,6 @@ import { EncryptedObject } from '../helper/encryption'
 
 export type AppConnectionSchema = Omit<AppConnection, 'value'> & {
     value: EncryptedObject
-    owner: User
 }
 
 export const AppConnectionEntity = new EntitySchema<AppConnectionSchema>({
@@ -36,7 +34,7 @@ export const AppConnectionEntity = new EntitySchema<AppConnectionSchema>({
         },
         platformId: {
             type: String,
-            nullable: false,
+            nullable: true,
         },
         pieceName: {
             type: String,
@@ -48,7 +46,7 @@ export const AppConnectionEntity = new EntitySchema<AppConnectionSchema>({
         projectIds: {
             type: ARRAY_COLUMN_TYPE,
             array: isPostgres(),
-            nullable: false,
+            nullable: true,
         },
         scope: {
             type: String,
@@ -71,16 +69,5 @@ export const AppConnectionEntity = new EntitySchema<AppConnectionSchema>({
             columns: ['ownerId'],
         },
     ],
-    relations: {
-        owner: {
-            type: 'many-to-one',
-            target: 'user',
-            cascade: true,
-            onDelete: 'SET NULL',
-            joinColumn: {
-                name: 'ownerId',
-                foreignKeyConstraintName: 'fk_app_connection_owner_id',
-            },
-        },
-    },
+    // Removed owner relation as the user entity is not defined
 })

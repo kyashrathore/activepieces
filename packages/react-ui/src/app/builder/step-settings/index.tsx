@@ -13,7 +13,6 @@ import {
 } from '@/components/ui/resizable-panel';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { piecesHooks } from '@/features/pieces/lib/pieces-hook';
-import { projectHooks } from '@/hooks/project-hooks';
 import {
   Action,
   ActionType,
@@ -29,7 +28,6 @@ import { PieceCardInfo } from '../../../features/pieces/components/piece-card';
 import { ActionErrorHandlingForm } from '../piece-properties/action-error-handling';
 import { formUtils } from '../piece-properties/form-utils';
 import { SidebarHeader } from '../sidebar-header';
-import { TestStepContainer } from '../test-step';
 
 import { CodeSettings } from './code-settings';
 import EditableStepName from './editable-step-name';
@@ -40,7 +38,6 @@ import { useStepSettingsContext } from './step-settings-context';
 
 const StepSettingsContainer = () => {
   const { selectedStep, pieceModel, formSchema } = useStepSettingsContext();
-  const { project } = projectHooks.useCurrentProject();
   const [
     readonly,
     exitStepSettings,
@@ -294,24 +291,7 @@ const StepSettingsContainer = () => {
               </div>
             </ScrollArea>
           </ResizablePanel>
-          {!readonly && (
-            <>
-              <ResizableHandle withHandle={true} />
-              <ResizablePanel defaultSize={45}>
-                <ScrollArea className="h-[calc(100%-35px)] p-4 pb-10 ">
-                  {modifiedStep.type && (
-                    <TestStepContainer
-                      type={modifiedStep.type}
-                      flowId={flowVersion.flowId}
-                      flowVersionId={flowVersion.id}
-                      projectId={project?.id}
-                      isSaving={saving}
-                    ></TestStepContainer>
-                  )}
-                </ScrollArea>
-              </ResizablePanel>
-            </>
-          )}
+      
         </ResizablePanelGroup>
       </form>
     </Form>

@@ -2,7 +2,6 @@ import { PieceMetadataModel } from '@activepieces/pieces-framework'
 import {
     ApId,
     BaseModel,
-    Project,
 } from '@activepieces/shared'
 import { EntitySchema } from 'typeorm'
 import {
@@ -15,9 +14,7 @@ import {
 } from '../database/database-common'
 
 
-type PieceMetadataSchemaWithRelations = PieceMetadataSchema & {
-    project: Project
-}
+type PieceMetadataSchemaWithRelations = PieceMetadataSchema
 
 export type PieceMetadataSchema = BaseModel<ApId> & PieceMetadataModel
 
@@ -112,28 +109,5 @@ export const PieceMetadataEntity =
               unique: true,
           },
       ],
-      relations: {
-          project: {
-              type: 'many-to-one',
-              target: 'project',
-              cascade: true,
-              onDelete: 'CASCADE',
-              joinColumn: {
-                  name: 'projectId',
-                  foreignKeyConstraintName: 'fk_piece_metadata_project_id',
-              },
-              nullable: true,
-          },
-          archiveId: {
-              type: 'one-to-one',
-              target: 'file', 
-              onDelete: 'RESTRICT',
-              onUpdate: 'RESTRICT',
-              joinColumn: {
-                  name: 'archiveId',
-                  referencedColumnName: 'id',
-                  foreignKeyConstraintName: 'fk_piece_metadata_file',
-              },
-          },
-      },
+      // Removed relations to non-existent entities
   })

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { authenticationSession } from '@/lib/authentication-session';
+
 import {
   AppConnectionOwners,
   AppConnectionWithoutSensitiveData,
@@ -13,7 +13,7 @@ export const appConnectionsHooks = {
   useConnections: (
     request: Omit<ListAppConnectionsRequestQuery, 'projectId'>,
   ) => {
-    const projectId = authenticationSession.getProjectId() ?? '';
+    const projectId = ''
     if (projectId === '') {
       console.error(
         'trying to use projectId when the authentication session is not set',
@@ -32,7 +32,7 @@ export const appConnectionsHooks = {
     });
   },
   useConnectionsOwners: () => {
-    const projectId = authenticationSession.getProjectId() ?? '';
+    const projectId =''
     if (projectId === '') {
       console.error(
         'trying to use projectId when the authentication session is not set',

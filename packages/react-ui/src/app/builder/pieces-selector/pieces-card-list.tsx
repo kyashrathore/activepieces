@@ -18,8 +18,7 @@ import {
   HandleSelectCallback,
   StepMetadataWithSuggestions,
 } from '@/features/pieces/lib/types';
-import { flagsHooks } from '@/hooks/flags-hooks';
-import { platformHooks } from '@/hooks/platform-hooks';
+
 import { useIsMobile } from '@/hooks/use-mobile';
 import {
   ApFlagId,
@@ -65,12 +64,9 @@ export const PiecesCardList: React.FC<PiecesCardListProps> = ({
   operation,
   closePieceSelector,
 }) => {
-  const { data: showRequestPieceButton } = flagsHooks.useFlag<boolean>(
-    ApFlagId.SHOW_COMMUNITY,
-  );
+  const showRequestPieceButton = false;
 
   const selectedItemRef = useRef<HTMLDivElement | null>(null);
-  const isCopilotEnabled = platformHooks.isCopilotEnabled();
   useEffect(() => {
     if (
       piecesIsLoaded &&
@@ -131,38 +127,7 @@ export const PiecesCardList: React.FC<PiecesCardListProps> = ({
         ))}
 
       {noResultsFound &&
-        isCopilotEnabled &&
-        operation.type !== FlowOperationType.UPDATE_TRIGGER && (
-          <div className="flex flex-col gap-2 items-center justify-center h-full ">
-            <WandSparkles className="w-14 h-14" />
-            <div className="text-sm mb-3">
-              {t('Let our AI assistant help you out')}
-            </div>
-            <AskAiButton
-              varitant={'default'}
-              operation={operation}
-              onClick={closePieceSelector}
-            ></AskAiButton>
-            {showRequestPieceButton && (
-              <>
-                {t('Or')}
-                <Link
-                  to={`${supportUrl}/c/feature-requests/9`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Button variant="ghost" size="sm">
-                    Request Piece
-                  </Button>
-                </Link>
-              </>
-            )}
-          </div>
-        )}
-
-      {noResultsFound &&
-        (!isCopilotEnabled ||
-          operation.type === FlowOperationType.UPDATE_TRIGGER) && (
+        operation.type === FlowOperationType.UPDATE_TRIGGER && (
           <div className="flex flex-col gap-2 items-center justify-center h-full ">
             <SearchX className="w-14 h-14" />
             <div className="text-sm ">{t('No pieces found')}</div>
@@ -200,7 +165,7 @@ const PieceCardListItem = React.forwardRef<
       setSelectedMetadata,
       handleSelect,
     },
-    ref,
+    ref
   ) => {
     const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
@@ -257,7 +222,7 @@ const PieceCardListItem = React.forwardRef<
           )}
       </div>
     );
-  },
+  }
 );
 
 PieceCardListItem.displayName = 'PieceCardListItem';
